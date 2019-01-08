@@ -91,11 +91,7 @@ class CredentialController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
-
-        \DB::enableQueryLog();
         $user->getAuthToken()->delete();
-//        exit(json_encode(\DB::getQueryLog()));
-        exit($user->getAuthToken()->toJson());
 
         return response(null, 204);
     }

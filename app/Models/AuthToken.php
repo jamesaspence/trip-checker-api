@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property User user
+ * @property string token
  */
 class AuthToken extends Model
 {

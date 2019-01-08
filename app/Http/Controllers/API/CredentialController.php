@@ -97,7 +97,6 @@ class CredentialController extends Controller
 //        exit(json_encode(\DB::getQueryLog()));
         exit($user->getAuthToken()->toJson());
 
-
         return response(null, 204);
     }
 

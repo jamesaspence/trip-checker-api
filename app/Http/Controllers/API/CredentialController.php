@@ -45,6 +45,7 @@ class CredentialController extends Controller
                 'status' => 'success',
                 'message' => 'Successfully registered user',
                 'data' => [
+                    'user' => $user,
                     'token' => $authToken->token
                 ]
             ], 201);
@@ -84,6 +85,7 @@ class CredentialController extends Controller
                 'status' => 'success',
                 'message' => 'Successfully logged in',
                 'data' => [
+                    'user' => $request->user(),
                     'token' => $authToken->token
                 ]
             ], 201);

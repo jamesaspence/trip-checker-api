@@ -66,8 +66,10 @@ class LoginTest extends TestCase
 
         $this->assertNotNull($data);
         $this->assertArrayHasKey('token', $data);
+        $this->assertArrayHasKey('user', $data);
 
         $token = $data['token'];
+        $userData = $data['user'];
 
         /** @var User $user */
         $user = User::query()
@@ -76,6 +78,10 @@ class LoginTest extends TestCase
             ->firstOrFail();
 
         $this->assertEquals(static::SUCCESS_EMAIL, $user->email);
+        $this->assertEquals($user->first_name, $userData['first_name']);
+        $this->assertEquals($user->last_name, $userData['last_name']);
+        $this->assertEquals($user->email, $userData['email']);
+        $this->assertEquals($user->id, $userData['id']);
     }
 
     public function testLogoutNoToken()

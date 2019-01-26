@@ -113,7 +113,9 @@ class RegistrationTest extends TestCase
 
         $this->assertNotNull($data);
         $this->assertArrayHasKey('token', $data);
-        $this->assertCount(1, $data);
+        $this->assertArrayHasKey('user', $data);
+
+        $userData = $data['user'];
 
         /** @var User $user */
         $user = User::query()
@@ -125,6 +127,10 @@ class RegistrationTest extends TestCase
         $this->assertEquals(static::SUCCESS_FIRST_NAME, $user->first_name);
         $this->assertEquals(static::SUCCESS_LAST_NAME, $user->last_name);
         $this->assertEquals(static::SUCCESS_EMAIL, $user->email);
+        $this->assertEquals($user->first_name, $userData['first_name']);
+        $this->assertEquals($user->last_name, $userData['last_name']);
+        $this->assertEquals($user->email, $userData['email']);
+        $this->assertEquals($user->id, $userData['id']);
     }
 
     private function getSuccessCredentials(array $overrides = []): array

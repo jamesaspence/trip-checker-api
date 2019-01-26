@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d0d9363408ade9267b12bfc567d4cd5c",
+    "content-hash": "3454fb52efe729df995f8b572263016e",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -636,49 +636,6 @@
             ],
             "description": "Highlight PHP code in terminal",
             "time": "2018-09-29T18:48:56+00:00"
-        },
-        {
-            "name": "jamesaspence/laravel-core-model",
-            "version": "v1.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/jamesaspence/laravel-core-model.git",
-                "reference": "7530b150385aad10cc59d8dfeb60de5b8cbc1997"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/jamesaspence/laravel-core-model/zipball/7530b150385aad10cc59d8dfeb60de5b8cbc1997",
-                "reference": "7530b150385aad10cc59d8dfeb60de5b8cbc1997",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/database": "^5.4"
-            },
-            "require-dev": {
-                "mockery/mockery": "^0.9.4",
-                "phpunit/phpunit": "^5.3"
-            },
-            "suggest": {
-                "illuminate/pagination": "(Required to paginate the result set (^5.4).)"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Laracore\\": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "James Spence",
-                    "email": "Jamesaspence20@gmail.com"
-                }
-            ],
-            "description": "A laravel core model layer, with factories and repositories.",
-            "time": "2017-09-11T02:56:04+00:00"
         },
         {
             "name": "laravel/framework",

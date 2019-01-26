@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Foundation\Testing\WithFaker;
-use Laracore\Repository\ModelRepository;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase

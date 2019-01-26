@@ -25,13 +25,15 @@ class CredentialController extends Controller
     public function registerUser(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required|max:255',
+            'first_name' => 'required|max:50',
+            'last_name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|min:6|confirmed',
         ]);
 
         $user = new User();
-        $user->name = $request->name;
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
         $user->email = $request->email;
         $user->password = \Hash::make($request->password);
         $user->save();

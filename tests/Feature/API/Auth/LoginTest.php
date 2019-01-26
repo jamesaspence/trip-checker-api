@@ -70,11 +70,8 @@ class LoginTest extends TestCase
 
         $token = $data['token'];
 
-        $repository = app(ModelRepository::class);
-        $repository->setModel(User::class);
-
         /** @var User $user */
-        $user = $repository->query()
+        $user = User::query()
             ->join('auth_tokens', 'users.id', '=', 'auth_tokens.user_id')
             ->where('token', '=', $token)
             ->firstOrFail();
@@ -91,11 +88,8 @@ class LoginTest extends TestCase
 
     public function testLogoutSuccess()
     {
-        $repository = app(ModelRepository::class);
-        $repository->setModel(User::class);
-
         /** @var User $user */
-        $user = $repository->query()
+        $user = User::query()
             ->where('email', '=', static::SUCCESS_EMAIL)
             ->firstOrFail();
 
@@ -106,7 +100,7 @@ class LoginTest extends TestCase
         $token->save();
 
         //Ensure we can retrieve this user with token from the DB
-        $repository->query()
+        User::query()
             ->join('auth_tokens', 'users.id', '=', 'auth_tokens.user_id')
             ->where('token', '=', $token->token)
             ->whereNull('auth_tokens.deleted_at')
@@ -116,7 +110,7 @@ class LoginTest extends TestCase
         $response = $this->logout($token->token);
         $response->assertSuccessful();
 
-        $shouldBeNull = $repository->query()
+        $shouldBeNull = User::query()
             ->join('auth_tokens', 'users.id', '=', 'auth_tokens.user_id')
             ->where('token', '=', $token->token)
             ->whereNull('auth_tokens.deleted_at')

@@ -16,7 +16,8 @@ class RegistrationTest extends TestCase
     use RefreshDatabase;
     use WithFaker;
 
-    const SUCCESS_NAME = 'Test Name';
+    const SUCCESS_FIRST_NAME = 'Test';
+    const SUCCESS_LAST_NAME = 'Testerton';
     const SUCCESS_EMAIL = 'success@pinda.test';
     const SUCCESS_PASSWORD = 'secret';
 
@@ -25,7 +26,8 @@ class RegistrationTest extends TestCase
         $response = $this->register();
 
         $response->assertJsonValidationErrors([
-            'name',
+            'first_name',
+            'last_name',
             'email',
             'password'
         ]);
@@ -42,7 +44,8 @@ class RegistrationTest extends TestCase
             'email'
         ]);
         $response->assertJsonMissingValidationErrors([
-            'name',
+            'first_name',
+            'last_name',
             'password'
         ]);
     }
@@ -59,7 +62,8 @@ class RegistrationTest extends TestCase
             'password'
         ]);
         $response->assertJsonMissingValidationErrors([
-            'name',
+            'first_name',
+            'last_name',
             'email'
         ]);
     }
@@ -75,7 +79,8 @@ class RegistrationTest extends TestCase
             'password'
         ]);
         $response->assertJsonMissingValidationErrors([
-            'name',
+            'first_name',
+            'last_name',
             'email'
         ]);
     }
@@ -94,7 +99,8 @@ class RegistrationTest extends TestCase
             'email'
         ]);
         $response->assertJsonMissingValidationErrors([
-            'name',
+            'first_name',
+            'last_name',
             'password'
         ]);
     }
@@ -110,24 +116,23 @@ class RegistrationTest extends TestCase
         $this->assertArrayHasKey('token', $data);
         $this->assertCount(1, $data);
 
-        $repository = app(ModelRepository::class);
-        $repository->setModel(User::class);
-
         /** @var User $user */
-        $user = $repository->query()
+        $user = User::query()
             ->join('auth_tokens', 'users.id', '=', 'auth_tokens.user_id')
             ->where('token', '=', $data['token'])
             ->where('email', '=', static::SUCCESS_EMAIL)
             ->firstOrFail();
 
-        $this->assertEquals(static::SUCCESS_NAME, $user->name);
+        $this->assertEquals(static::SUCCESS_FIRST_NAME, $user->first_name);
+        $this->assertEquals(static::SUCCESS_LAST_NAME, $user->last_name);
         $this->assertEquals(static::SUCCESS_EMAIL, $user->email);
     }
 
     private function getSuccessCredentials(array $overrides = []): array
     {
         return array_merge([
-            'name' => static::SUCCESS_NAME,
+            'first_name' => static::SUCCESS_FIRST_NAME,
+            'last_name' => static::SUCCESS_LAST_NAME,
             'email' => static::SUCCESS_EMAIL,
             'password' => static::SUCCESS_PASSWORD,
             'password_confirmation' => static::SUCCESS_PASSWORD

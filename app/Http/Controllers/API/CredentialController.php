@@ -72,8 +72,10 @@ class CredentialController extends Controller
                 ->json([
                     'status' => 'error',
                     'message' => 'Login error',
-                    'data' => [
-                        'Email or password is incorrect'
+                    'errors' => [
+                        'email' => [
+                            'Email or password is incorrect.'
+                        ]
                     ]
                 ], 401);
         }

@@ -20,7 +20,7 @@ class TemplateController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        $templates = Template::with('templateItems')
+        $templates = Template::with('items')
             ->where('user_id', '=', $user->id)
             ->get();
 

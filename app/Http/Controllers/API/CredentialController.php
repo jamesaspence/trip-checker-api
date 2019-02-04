@@ -12,6 +12,18 @@ use Illuminate\Http\Request;
 
 class CredentialController extends Controller
 {
+    /**
+     * @var AuthTokenGenerator
+     */
+    private $generator;
+
+    /**
+     * CredentialController constructor.
+     */
+    public function __construct(AuthTokenGenerator $generator)
+    {
+        $this->generator = $generator;
+    }
 
 
     /**
@@ -38,7 +50,7 @@ class CredentialController extends Controller
         $user->password = \Hash::make($request->password);
         $user->save();
 
-        $authToken = $this->generateNewAuthToken($user);
+        $authToken = $this->generator->generateNewAuthToken($user);
 
         return response()
             ->json([
@@ -80,7 +92,7 @@ class CredentialController extends Controller
                 ], 401);
         }
 
-        $authToken = $this->generateNewAuthToken($request->user());
+        $authToken = $this->generator->generateNewAuthToken($request->user());
 
         return response()
             ->json([
@@ -100,21 +112,6 @@ class CredentialController extends Controller
         $user->getAuthToken()->delete();
 
         return response(null, 204);
-    }
-
-    private function generateNewAuthToken(User $user): AuthToken {
-        do {
-            $token = str_random(32);
-        } while (AuthToken::query()->withTrashed()->where('token', '=', $token)->exists());
-
-        $authToken = new AuthToken();
-        $authToken->token = $token;
-        $authToken->user()->associate($user);
-        $authToken->save();
-
-        $user->setAuthToken($authToken);
-
-        return $authToken;
     }
 
 }

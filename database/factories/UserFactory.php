@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\AuthToken;
+use App\Models\User;
 use Faker\Generator as Faker;
 
 /*
@@ -12,8 +14,7 @@ use Faker\Generator as Faker;
 | model instances for testing / seeding your application's database.
 |
 */
-
-$factory->define(\App\Models\User::class, function (Faker $faker) {
+$factory->define(User::class, function (Faker $faker) {
     return [
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
@@ -22,4 +23,19 @@ $factory->define(\App\Models\User::class, function (Faker $faker) {
         'password' => '$2y$10$TKh8H1.PfQx37YgCzwiKb.KjNyWgaHb9cbcoQgdIVFlYg7B77UdFm', // secret
         'remember_token' => str_random(10),
     ];
+});
+
+$factory->state(User::class, 'api', []);
+
+$factory->afterCreatingState(User::class, 'api', function (User $user, Faker $faker) {
+    /** @var AuthToken $authToken */
+    $authToken = factory(AuthToken::class)
+        ->make();
+
+    $authToken->user()->associate($user);
+
+    $authToken->save();
+    $user->setAuthToken($authToken);
+
+    return $user;
 });

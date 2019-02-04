@@ -60,8 +60,8 @@ class TemplateController extends Controller
                 })
             ],
             'items' => 'required|array',
-            'items.item' => 'required|string',
-            'items.order' => 'required|integer'
+            'items.item' => 'required|string|distinct',
+            'items.order' => 'required|integer|distinct'
         ]);
 
         $template = new Template();
@@ -90,6 +90,75 @@ class TemplateController extends Controller
                     'template' => $template
                 ]
             ], 201);
+    }
+
+    public function editTemplate(Template $template, Request $request)
+    {
+        $this->validate($request, [
+            'name' => [
+                'required',
+                'string',
+                Rule::unique('templates')->ignore($template->id)->where(function ($query) use ($request) {
+                    return $query->join('templates', 'template_items.template_id', '=', 'templates.id')
+                        ->where('templates.user_id', '=', $request->user()->id);
+                })
+            ],
+            'items' => 'required|array',
+            'items.item' => 'required|string|distinct',
+            'items.order' => 'required|integer|distinct'
+        ]);
+
+        $template->load('items');
+        $template->name = $request->name;
+        $template->save();
+
+        /** @var Collection $existingItems */
+        $existingItems = $template->items;
+        $modifiedItems = new Collection();
+        foreach ($request->items as $requestItem) {
+            $itemName = $requestItem['item'];
+            $itemOrder = $requestItem['order'];
+
+            $item = $existingItems->first(function ($indvItem) use ($itemName) {
+                return $indvItem->item === $itemName;
+            });
+
+            if (is_null($item)) {
+                $item = new TemplateItem();
+                $item->item = $itemName;
+                $item->template()->associate($template);
+            }
+
+            $item->order = $itemOrder;
+            $item->save();
+            $modifiedItems->push($item);
+        }
+
+        $modifiedItemIds = $modifiedItems->pluck('id');
+        $itemsToDelete = $existingItems->whereNotIn('id', $modifiedItemIds);
+
+        $itemsToDelete->each(function ($indvItem) {
+            /** @var TemplateItem $indvItem */
+            $indvItem->delete();
+        });
+
+        $template->load('items');
+
+        return response()
+            ->json([
+                'status' => 'success',
+                'message' => 'Successfully edited template',
+                'data' => [
+                    'template' => $template
+                ]
+            ]);
+    }
+
+    public function deleteTemplate(Template $template)
+    {
+        $template->delete();
+
+        return response()->setStatusCode(204);
     }
 
 }

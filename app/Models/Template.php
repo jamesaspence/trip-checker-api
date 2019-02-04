@@ -13,7 +13,7 @@ class Template extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function templateItems()
+    public function items()
     {
         return $this->hasMany(TemplateItem::class);
     }

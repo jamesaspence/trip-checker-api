@@ -70,7 +70,7 @@ class TemplateController extends Controller
         $template->save();
 
         $templateItems = new Collection();
-        foreach ($request->items as $item) {
+        foreach ($request->get('items', []) as $item) {
             $templateItem = new TemplateItem();
             $templateItem->item = $item['item'];
             $templateItem->order = $item['order'];
@@ -115,7 +115,7 @@ class TemplateController extends Controller
         /** @var Collection $existingItems */
         $existingItems = $template->items;
         $modifiedItems = new Collection();
-        foreach ($request->items as $requestItem) {
+        foreach ($request->get('items', []) as $requestItem) {
             $itemName = $requestItem['item'];
             $itemOrder = $requestItem['order'];
 

@@ -344,7 +344,9 @@ class TemplateCrudTest extends TestCase
 
         $response = $this->makeRequest(
             $this->generateRouteForTemplate($otherTemplate->id, 'delete'),
-            'DELETE'
+            'DELETE',
+            [],
+            $this->user
         );
 
         $response->assertForbidden();

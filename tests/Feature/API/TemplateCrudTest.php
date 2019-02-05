@@ -100,39 +100,268 @@ class TemplateCrudTest extends TestCase
 
         $this->assertArrayHasKey('template', $data);
 
-        $responseLink = $data['template'];
+        $responseTemplate = $data['template'];
 
-        $this->assertEquals($template->id, $responseLink['id']);
+        $this->assertEquals($template->id, $responseTemplate['id']);
+    }
+
+    public function testCreateTemplateValidation()
+    {
+        $url = route('api.templates.create');
+
+        $response = $this->makeRequest($url, 'POST', [], $this->user);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors([
+            'name',
+            'items'
+        ]);
+    }
+
+    public function testCreateTemplateNameInUse()
+    {
+        $this->createTemplate($this->user, [
+            'name' => 'test name'
+        ]);
+
+        $url = route('api.templates.create');
+
+        $response = $this->makeRequest(
+            $url,
+            'POST',
+            [
+                'name' => 'test name',
+                'items' => [
+                    [
+                        'item' => 'first',
+                        'order' => 1
+                    ],
+                    [
+                        'item' => 'second',
+                        'order' => 2
+                    ]
+                ]
+            ],
+            $this->user
+        );
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors([
+            'name'
+        ]);
+    }
+
+    public function testCreateTemplateSuccess()
+    {
+        $url = route('api.templates.create');
+
+        $response = $this->makeRequest(
+            $url,
+            'POST',
+            [
+                'name' => 'test name',
+                'items' => [
+                    [
+                        'item' => 'first',
+                        'order' => 1
+                    ],
+                    [
+                        'item' => 'second',
+                        'order' => 2
+                    ]
+                ]
+            ],
+            $this->user
+        );
+
+        $response->assertStatus(201);
+
+        $data = $response->json('data');
+
+        $this->assertNotNull($data);
+
+        $this->assertArrayHasKey('template', $data);
+
+        $responseTemplate = $data['template'];
+
+        $this->assertEquals('test name', $responseTemplate['name']);
+        $this->assertCount(2, $responseTemplate['items']);
+    }
+
+    public function testEditTemplateValidation()
+    {
+        $template = $this->createTemplate($this->user);
+
+        $response = $this->makeRequest(
+            $this->generateRouteForTemplate($template->id, 'update'),
+            'PUT',
+            [],
+            $this->user
+        );
+
+        $response->assertStatus(422);
+
+        $response->assertJsonValidationErrors([
+            'name',
+            'items'
+        ]);
     }
 
     public function testEditTemplateNotFound()
     {
-        $this->stub();
+        $response = $this->makeRequest(
+            $this->generateRouteForTemplate(1, 'update'),
+            'PUT',
+            [
+                'name' => 'Test name',
+                'items' => [
+                    [
+                        'item' => 'first',
+                        'order' => 1
+                    ],
+                    [
+                        'item' => 'second',
+                        'order' => 2
+                    ]
+                ]
+            ],
+            $this->user
+        );
+
+        $response->assertNotFound();
+    }
+
+    public function testEditTemplateNameAlreadyInUse()
+    {
+        $this->createTemplate($this->user, [
+            'name' => 'Test name'
+        ]);
+        $template = $this->createTemplate($this->user, [
+            'name' => 'Second name'
+        ]);
+
+        $response = $this->makeRequest(
+            $this->generateRouteForTemplate($template->id, 'update'),
+            'PUT',
+            [
+                'name' => 'Test name',
+                'items' => [
+                    [
+                        'item' => 'first',
+                        'order' => 1
+                    ],
+                    [
+                        'item' => 'second',
+                        'order' => 2
+                    ]
+                ]
+            ],
+            $this->user
+        );
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors([
+            'name'
+        ]);
     }
 
     public function testEditTemplateNotOwnedByUser()
     {
-        $this->stub();
+        $otherUser = $this->createUser();
+        $otherTemplate = $this->createTemplate($otherUser);
+
+        $response = $this->makeRequest(
+            $this->generateRouteForTemplate($otherTemplate->id, 'update'),
+            'PUT',
+            [
+                'name' => 'Test name',
+                'items' => [
+                    [
+                        'item' => 'first',
+                        'order' => 1
+                    ],
+                    [
+                        'item' => 'second',
+                        'order' => 2
+                    ]
+                ]
+            ],
+            $this->user
+        );
+
+        $response->assertForbidden();
     }
 
     public function testEditTemplateSuccess()
     {
-        $this->stub();
+        $template = $this->createTemplate($this->user, [
+            'name' => 'Original name'
+        ]);
+
+        $response = $this->makeRequest(
+            $this->generateRouteForTemplate($template->id, 'update'),
+            'PUT',
+            [
+                'name' => 'Test name',
+                'items' => [
+                    [
+                        'item' => 'first',
+                        'order' => 1
+                    ],
+                    [
+                        'item' => 'second',
+                        'order' => 2
+                    ]
+                ]
+            ],
+            $this->user
+        );
+
+        $response->assertSuccessful();
+        $data = $this->assertAndRetrieveJsonData($response);
+
+        $this->assertNotNull($data['template']);
+        $this->assertEquals('Test name', $data['template']['name']);
+        $this->assertCount(2, $data['template']['items']);
     }
 
     public function testDeleteTemplateNotFound()
     {
-        $this->stub();
+        $response = $this->makeRequest(
+            $this->generateRouteForTemplate(1, 'delete'),
+            'DELETE',
+            [],
+            $this->user
+        );
+
+        $response->assertNotFound();
     }
 
     public function testDeleteTemplateNotOwnedByUser()
     {
-        $this->stub();
+        $otherUser = $this->createUser();
+        $otherTemplate = $this->createTemplate($otherUser);
+
+        $response = $this->makeRequest(
+            $this->generateRouteForTemplate($otherTemplate->id, 'delete'),
+            'DELETE'
+        );
+
+        $response->assertForbidden();
     }
 
     public function testDeleteTemplateSuccess()
     {
-        $this->stub();
+        $template = $this->createTemplate($this->user);
+
+        $response = $this->makeRequest(
+            $this->generateRouteForTemplate($template->id, 'delete'),
+            'DELETE',
+            [],
+            $this->user
+        );
+
+        $response->assertStatus(204);
     }
 
     private function createTemplate(User $user, array $attributes = [], $numberOfItems = null): Template

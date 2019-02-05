@@ -60,8 +60,8 @@ class TemplateController extends Controller
                 })
             ],
             'items' => 'required|array',
-            'items.item' => 'required|string|distinct',
-            'items.order' => 'required|integer|distinct'
+            'items.*.item' => 'required|string|distinct',
+            'items.*.order' => 'required|integer|distinct'
         ]);
 
         $template = new Template();

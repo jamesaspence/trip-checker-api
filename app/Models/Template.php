@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property integer user_id
  * @property string name
  * @property Collection items
+ * @property integer id
  */
 class Template extends Model
 {

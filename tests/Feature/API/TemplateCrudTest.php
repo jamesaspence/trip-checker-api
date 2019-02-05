@@ -325,6 +325,51 @@ class TemplateCrudTest extends TestCase
         $this->assertCount(2, $data['template']['items']);
     }
 
+    public function testEditTemplateUpdatesItems()
+    {
+        $template = $this->createTemplate($this->user, [
+            'name' => 'Test name'
+        ], 5);
+
+        $template->loadMissing('items');
+        $items = $template->items;
+
+        $i = 0;
+        $newItems = $items->shuffle()
+            ->map(function (TemplateItem $item) use (&$i) {
+                $i++;
+                return [
+                    'item' => $item->item . ' #' . $i,
+                    'order' => $i
+                ];
+            });
+
+        $response = $this->makeRequest(
+            $this->generateRouteForTemplate($template->id, 'update'),
+            'PUT',
+            [
+                'name' => 'Test name',
+                'items' => $newItems
+            ],
+            $this->user
+        );
+
+        $response->assertSuccessful();
+        $data = $this->assertAndRetrieveJsonData($response);
+
+        $this->assertArrayHasKey('template', $data);
+
+        $responseTemplate = $data['template'];
+        $responseItems = $responseTemplate['items'];
+
+        foreach ($responseItems as $j => $responseItem) {
+            $newItem = $newItems->get($j);
+            $this->assertNotNull($newItem);
+            $this->assertEquals($newItem['item'], $responseItem['item']);
+            $this->assertEquals($newItem['order'], $responseItem['order']);
+        }
+    }
+
     public function testDeleteTemplateNotFound()
     {
         $response = $this->makeRequest(

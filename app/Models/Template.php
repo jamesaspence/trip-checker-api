@@ -4,11 +4,13 @@
 namespace App\Models;
 
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property integer user_id
  * @property string name
+ * @property Collection items
  */
 class Template extends Model
 {

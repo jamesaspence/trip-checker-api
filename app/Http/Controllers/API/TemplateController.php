@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateTemplateRequest;
+use App\Http\Requests\EditTemplateRequest;
 use App\Models\Template;
 use App\Models\TemplateItem;
 use App\Models\User;
@@ -48,22 +50,8 @@ class TemplateController extends Controller
             ]);
     }
 
-    public function createTemplate(Request $request)
+    public function createTemplate(CreateTemplateRequest $request)
     {
-        $this->validate($request, [
-            'name' => [
-                'required',
-                'string',
-                Rule::unique('templates')->where(function ($query) use ($request) {
-                    return $query->join('templates', 'template_items.template_id', '=', 'templates.id')
-                        ->where('templates.user_id', '=', $request->user()->id);
-                })
-            ],
-            'items' => 'required|array',
-            'items.*.item' => 'required|string|distinct',
-            'items.*.order' => 'required|integer|distinct'
-        ]);
-
         $template = new Template();
         $template->name = $request->name;
         $template->user()->associate($request->user());
@@ -92,22 +80,8 @@ class TemplateController extends Controller
             ], 201);
     }
 
-    public function editTemplate(Template $template, Request $request)
+    public function editTemplate(Template $template, EditTemplateRequest $request)
     {
-        $this->validate($request, [
-            'name' => [
-                'required',
-                'string',
-                Rule::unique('templates')->ignore($template->id)->where(function ($query) use ($request) {
-                    return $query->join('templates', 'template_items.template_id', '=', 'templates.id')
-                        ->where('templates.user_id', '=', $request->user()->id);
-                })
-            ],
-            'items' => 'required|array',
-            'items.*.item' => 'required|string|distinct',
-            'items.*.order' => 'required|integer|distinct'
-        ]);
-
         $template->load('items');
         $template->name = $request->name;
         $template->save();

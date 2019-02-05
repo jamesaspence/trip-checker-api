@@ -6,6 +6,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property integer user_id
+ * @property string name
+ */
 class Template extends Model
 {
     public function user()

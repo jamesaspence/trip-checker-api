@@ -119,6 +119,7 @@ class TemplateController extends Controller
             $itemName = $requestItem['item'];
             $itemOrder = $requestItem['order'];
 
+            /** @var TemplateItem $item */
             $item = $existingItems->first(function ($indvItem) use ($itemName) {
                 return $indvItem->item === $itemName;
             });

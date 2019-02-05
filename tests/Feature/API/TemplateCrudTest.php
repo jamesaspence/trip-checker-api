@@ -105,6 +105,36 @@ class TemplateCrudTest extends TestCase
         $this->assertEquals($template->id, $responseLink['id']);
     }
 
+    public function testEditTemplateNotFound()
+    {
+        $this->stub();
+    }
+
+    public function testEditTemplateNotOwnedByUser()
+    {
+        $this->stub();
+    }
+
+    public function testEditTemplateSuccess()
+    {
+        $this->stub();
+    }
+
+    public function testDeleteTemplateNotFound()
+    {
+        $this->stub();
+    }
+
+    public function testDeleteTemplateNotOwnedByUser()
+    {
+        $this->stub();
+    }
+
+    public function testDeleteTemplateSuccess()
+    {
+        $this->stub();
+    }
+
     private function createTemplate(User $user, array $attributes = [], $numberOfItems = null): Template
     {
         return $this->createTemplates($user, 1, $attributes, $numberOfItems)

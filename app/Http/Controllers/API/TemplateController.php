@@ -104,8 +104,8 @@ class TemplateController extends Controller
                 })
             ],
             'items' => 'required|array',
-            'items.item' => 'required|string|distinct',
-            'items.order' => 'required|integer|distinct'
+            'items.*.item' => 'required|string|distinct',
+            'items.*.order' => 'required|integer|distinct'
         ]);
 
         $template->load('items');
@@ -158,7 +158,7 @@ class TemplateController extends Controller
     {
         $template->delete();
 
-        return response()->setStatusCode(204);
+        return response(null, 204);
     }
 
 }

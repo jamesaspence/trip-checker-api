@@ -19,6 +19,6 @@ class Template extends Model
 
     public function items()
     {
-        return $this->hasMany(TemplateItem::class);
+        return $this->hasMany(TemplateItem::class)->orderBy('order');
     }
 }

@@ -4,7 +4,6 @@
 namespace Tests\Feature\API;
 
 
-use App\Models\AuthToken;
 use App\Models\User;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithAuthentication;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;

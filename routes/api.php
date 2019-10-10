@@ -19,5 +19,21 @@ Route::prefix('v1')->name('api.')->group(function () {
 
     Route::group(['middleware' => 'auth:api'], function () {
         Route::delete('/logout', 'CredentialController@logout')->name('logout');
+
+        Route::prefix('templates')->name('templates.')->group(function () {
+            Route::get('/', 'TemplateController@getTemplates')
+                ->name('getTemplates');
+            Route::post('/', 'TemplateController@createTemplate')
+                ->name('create');
+            Route::get('/{template}', 'TemplateController@getTemplate')
+                ->middleware('can:view,template')
+                ->name('getTemplate');
+            Route::put('/{template}', 'TemplateController@editTemplate')
+                ->middleware('can:update,template')
+                ->name('update');
+            Route::delete('/{template}', 'TemplateController@deleteTemplate')
+                ->middleware('can:delete,template')
+                ->name('delete');
+        });
     });
 });

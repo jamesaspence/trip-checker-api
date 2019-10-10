@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\AuthToken;
+use App\Models\Template;
+use App\Policies\TemplatePolicy;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -14,7 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        'App\Model' => 'App\Policies\ModelPolicy',
+        Template::class => TemplatePolicy::class
     ];
 
     /**

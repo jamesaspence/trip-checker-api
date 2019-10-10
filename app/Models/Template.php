@@ -4,8 +4,15 @@
 namespace App\Models;
 
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property integer user_id
+ * @property string name
+ * @property Collection items
+ * @property integer id
+ */
 class Template extends Model
 {
     public function user()
@@ -13,8 +20,8 @@ class Template extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function templateItems()
+    public function items()
     {
-        return $this->hasMany(TemplateItem::class);
+        return $this->hasMany(TemplateItem::class)->orderBy('order');
     }
 }
